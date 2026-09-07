@@ -4,6 +4,7 @@ import { eq } from "drizzle-orm";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { getCurrentCoach } from "@/lib/current-coach";
+import DeleteStudentButton from "@/components/DeleteStudentButton";
 
 export default async function StudentPage({
   params,
@@ -40,14 +41,19 @@ export default async function StudentPage({
           ← Students
         </Link>
 
-        <h1 className="mt-2 text-2xl font-semibold text-black dark:text-zinc-50">
-          {student.name}
-        </h1>
-        <p className="text-sm text-zinc-500">
-          {[student.club.name, student.startDate, student.arm]
-            .filter(Boolean)
-            .join(" · ")}
-        </p>
+        <div className="mt-2 flex items-start justify-between">
+          <div>
+            <h1 className="text-2xl font-semibold text-black dark:text-zinc-50">
+              {student.name}
+            </h1>
+            <p className="text-sm text-zinc-500">
+              {[student.club.name, student.startDate, student.arm]
+                .filter(Boolean)
+                .join(" · ")}
+            </p>
+          </div>
+          <DeleteStudentButton studentId={student.id} studentName={student.name} />
+        </div>
 
         <h2 className="mt-8 text-lg font-medium text-black dark:text-zinc-50">
           Progress logs

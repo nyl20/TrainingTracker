@@ -16,7 +16,7 @@ export default function AddSessionForm() {
   return (
     <form action={formAction} className="mt-3 flex flex-col gap-2">
       <input
-        key={state.addedName ?? "empty"}
+        key={`input-${state.addedName ?? "empty"}`}
         name="name"
         placeholder="Session name"
         required
@@ -27,7 +27,7 @@ export default function AddSessionForm() {
       </button>
       {state.addedName && (
         <p
-          key={state.addedName}
+          key={`message-${state.addedName}`}
           className="animate-fade-out-message flex items-center gap-1 text-sm text-green-600 dark:text-green-500"
         >
           <svg

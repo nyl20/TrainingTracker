@@ -16,15 +16,18 @@ function today() {
   return new Date().toISOString().slice(0, 10);
 }
 
-export async function addStudent(formData: FormData) {
+export async function addStudent(
+  _prevState: { addedName: string | null },
+  formData: FormData,
+) {
   const coach = await getCurrentCoach();
-  if (!coach) return;
+  if (!coach) return { addedName: null };
 
   const name = formData.get("name");
   const clubId = formData.get("clubId");
-  if (typeof name !== "string" || name.trim() === "") return;
+  if (typeof name !== "string" || name.trim() === "") return { addedName: null };
   if (typeof clubId !== "string" || !coach.clubs.some((c) => c.id === clubId)) {
-    return;
+    return { addedName: null };
   }
 
   await db.insert(students).values({
@@ -35,6 +38,7 @@ export async function addStudent(formData: FormData) {
   });
   revalidatePath("/");
   revalidatePath("/settings");
+  return { addedName: name.trim() };
 }
 
 export async function addSession(
@@ -118,4 +122,22 @@ export async function addProgressLog(formData: FormData) {
     redirect(`/students/${authorizedStudentIds[0]}`);
   }
   redirect(`/?logged=${authorizedStudentIds.length}`);
+}
+
+export async function deleteStudent(formData: FormData) {
+  const coach = await getCurrentCoach();
+  if (!coach) return;
+
+  const studentId = formData.get("studentId");
+  if (typeof studentId !== "string" || studentId === "") return;
+
+  const student = await db.query.students.findFirst({
+    where: eq(students.id, studentId),
+  });
+  if (!student || !coach.clubs.some((c) => c.id === student.clubId)) return;
+
+  await db.delete(students).where(eq(students.id, studentId));
+
+  revalidatePath("/");
+  redirect("/");
 }

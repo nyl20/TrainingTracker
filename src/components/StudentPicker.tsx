@@ -19,18 +19,23 @@ export default function StudentPicker({
     defaultStudentId ? [defaultStudentId] : [],
   );
 
-  const filtered = useMemo(() => {
+  const matches = useMemo(() => {
     const q = query.trim().toLowerCase();
-    if (!q) return students;
-    return students.filter((s) => s.name.toLowerCase().includes(q));
-  }, [query, students]);
+    if (!q) return [];
+    return students.filter(
+      (s) => !selectedIds.includes(s.id) && s.name.toLowerCase().includes(q),
+    );
+  }, [query, students, selectedIds]);
 
   const selected = students.filter((s) => selectedIds.includes(s.id));
 
-  function toggle(id: string) {
-    setSelectedIds((prev) =>
-      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id],
-    );
+  function select(id: string) {
+    setSelectedIds((prev) => (prev.includes(id) ? prev : [...prev, id]));
+    setQuery("");
+  }
+
+  function remove(id: string) {
+    setSelectedIds((prev) => prev.filter((x) => x !== id));
   }
 
   return (
@@ -44,14 +49,14 @@ export default function StudentPicker({
           {selected.map((s) => (
             <span
               key={s.id}
-              className="flex items-center gap-1 rounded-full bg-zinc-200 px-2 py-1 text-xs dark:bg-zinc-800"
+              className="flex items-center gap-1 rounded-full bg-indigo-100 px-2 py-1 text-xs text-indigo-800 dark:bg-indigo-900 dark:text-indigo-200"
             >
               {s.name}
               <button
                 type="button"
-                onClick={() => toggle(s.id)}
+                onClick={() => remove(s.id)}
                 aria-label={`Remove ${s.name}`}
-                className="text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300"
+                className="text-indigo-500 hover:text-indigo-700 dark:hover:text-indigo-300"
               >
                 ×
               </button>
@@ -60,31 +65,31 @@ export default function StudentPicker({
         </div>
       )}
 
-      <input
-        type="text"
-        placeholder="Search students…"
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-        className={`w-full ${inputClass}`}
-      />
+      <div className="relative">
+        <input
+          type="text"
+          placeholder="Search students…"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          className={`w-full ${inputClass}`}
+        />
 
-      <div className="mt-1 max-h-48 overflow-y-auto rounded border border-zinc-300 dark:border-zinc-700">
-        {filtered.map((s) => (
-          <button
-            key={s.id}
-            type="button"
-            onClick={() => toggle(s.id)}
-            className={`block w-full px-3 py-2 text-left text-sm hover:bg-zinc-50 dark:hover:bg-zinc-900 ${
-              selectedIds.includes(s.id)
-                ? "bg-zinc-100 font-medium dark:bg-zinc-800"
-                : ""
-            }`}
-          >
-            {s.name}
-          </button>
-        ))}
-        {filtered.length === 0 && (
-          <p className="px-3 py-2 text-sm text-zinc-500">No matches</p>
+        {query.trim() !== "" && (
+          <div className="absolute z-10 mt-1 max-h-48 w-full overflow-y-auto rounded border border-zinc-300 bg-white shadow-sm dark:border-zinc-700 dark:bg-zinc-900">
+            {matches.map((s) => (
+              <button
+                key={s.id}
+                type="button"
+                onClick={() => select(s.id)}
+                className="block w-full px-3 py-2 text-left text-sm hover:bg-zinc-50 dark:hover:bg-zinc-800"
+              >
+                {s.name}
+              </button>
+            ))}
+            {matches.length === 0 && (
+              <p className="px-3 py-2 text-sm text-zinc-500">No matches</p>
+            )}
+          </div>
         )}
       </div>
     </div>

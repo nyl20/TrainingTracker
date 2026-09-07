@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useActionState, useState } from "react";
 import { addStudent } from "@/app/actions";
 
 const inputClass =
@@ -13,10 +13,17 @@ export default function AddStudentForm({
 }: {
   clubs: { id: string; name: string }[];
 }) {
+  const [state, formAction] = useActionState(addStudent, { addedName: null });
   const [name, setName] = useState("");
+  const [lastAddedName, setLastAddedName] = useState(state.addedName);
+
+  if (state.addedName !== lastAddedName) {
+    setLastAddedName(state.addedName);
+    setName("");
+  }
 
   return (
-    <form action={addStudent} className="mt-3 flex flex-col gap-2">
+    <form action={formAction} className="mt-3 flex flex-col gap-2">
       <input
         name="name"
         placeholder="Name"
@@ -25,7 +32,13 @@ export default function AddStudentForm({
         onChange={(e) => setName(e.target.value)}
         className={inputClass}
       />
-      <select name="clubId" required defaultValue="" className={inputClass}>
+      <select
+        key={state.addedName ?? "empty"}
+        name="clubId"
+        required
+        defaultValue=""
+        className={inputClass}
+      >
         <option value="" disabled>
           Select a club
         </option>
@@ -35,7 +48,12 @@ export default function AddStudentForm({
           </option>
         ))}
       </select>
-      <input name="arm" placeholder="Arm" className={inputClass} />
+      <input
+        key={`arm-${state.addedName ?? "empty"}`}
+        name="arm"
+        placeholder="Arm"
+        className={inputClass}
+      />
       <button type="submit" disabled={name.trim() === ""} className={buttonClass}>
         Add student
       </button>
