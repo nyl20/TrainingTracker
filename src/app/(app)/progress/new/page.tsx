@@ -47,12 +47,12 @@ export default async function NewProgressLogPage({
         </h1>
 
         <form action={addProgressLog} className="mt-6 flex flex-col gap-2">
-          <label className="text-sm text-zinc-500">
-            Students
+          <div className="text-sm text-zinc-500">
+            <p>Students</p>
             <div className="mt-1">
               <StudentPicker students={myStudents} defaultStudentId={studentId} />
             </div>
-          </label>
+          </div>
 
           <label className="text-sm text-zinc-500">
             Session
