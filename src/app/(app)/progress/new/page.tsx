@@ -99,7 +99,7 @@ export default async function NewProgressLogPage({
               type="date"
               required
               defaultValue={new Date().toISOString().slice(0, 10)}
-              className={`mt-1 w-full ${inputClass}`}
+              className={`mt-1 block w-full min-w-0 max-w-full box-border ${inputClass}`}
             />
           </label>
 
