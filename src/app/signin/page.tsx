@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { signIn } from "@/app/auth/actions";
 
 const inputClass =
@@ -16,6 +17,14 @@ export default async function SignInPage({
   return (
     <div className="flex flex-1 flex-col items-center justify-center bg-zinc-50 px-6 py-16 font-sans dark:bg-black">
       <main className="w-full max-w-sm">
+        <Image
+          src="/T.gif"
+          alt="TrainingTracker logo"
+          width={160}
+          height={160}
+          priority
+          className="mx-auto mb-6 h-32 w-32 object-contain sm:h-40 sm:w-40"
+        />
         <h1 className="text-2xl font-semibold text-black dark:text-zinc-50">
           Sign in
         </h1>
