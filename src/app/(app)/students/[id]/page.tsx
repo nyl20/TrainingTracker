@@ -4,7 +4,6 @@ import { eq } from "drizzle-orm";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { getCurrentCoach } from "@/lib/current-coach";
-import DeleteStudentButton from "@/components/DeleteStudentButton";
 
 export default async function StudentPage({
   params,
@@ -22,7 +21,10 @@ export default async function StudentPage({
       club: true,
       progressLogs: {
         with: { session: true, coach: true },
-        orderBy: (progressLogs, { desc }) => [desc(progressLogs.date)],
+        orderBy: (progressLogs, { desc }) => [
+          desc(progressLogs.date),
+          desc(progressLogs.createdAt),
+        ],
       },
     },
   });
@@ -52,7 +54,20 @@ export default async function StudentPage({
                 .join(" · ")}
             </p>
           </div>
-          <DeleteStudentButton studentId={student.id} studentName={student.name} />
+          <Link
+            href={`/students/${student.id}/edit`}
+            aria-label="Edit student"
+            className="flex h-9 w-9 items-center justify-center rounded-full border border-zinc-300 text-zinc-700 hover:bg-zinc-100 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-900"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+              className="h-5 w-5"
+            >
+              <path d="M13.586 3.586a2 2 0 1 1 2.828 2.828l-.793.793-2.828-2.828.793-.793ZM11.207 5.964 3 14.172V17h2.828l8.208-8.207-2.829-2.829Z" />
+            </svg>
+          </Link>
         </div>
 
         <h2 className="mt-8 text-lg font-medium text-black dark:text-zinc-50">

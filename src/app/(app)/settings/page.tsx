@@ -2,7 +2,6 @@ import { getCurrentCoach } from "@/lib/current-coach";
 import { redirect } from "next/navigation";
 import { signOut } from "@/app/auth/actions";
 import AddStudentForm from "@/components/AddStudentForm";
-import AddSessionForm from "@/components/AddSessionForm";
 
 const summaryClass =
   "cursor-pointer list-none text-lg font-medium text-black marker:content-none dark:text-zinc-50 [&::-webkit-details-marker]:hidden";
@@ -32,16 +31,6 @@ export default async function SettingsPage() {
           ) : (
             <AddStudentForm clubs={coach.clubs} />
           )}
-        </details>
-
-        <details className="mt-6 group">
-          <summary className={summaryClass}>
-            <span className="mr-1 inline-block transition-transform group-open:rotate-90">
-              ›
-            </span>
-            Add session
-          </summary>
-          <AddSessionForm />
         </details>
 
         <form action={signOut} className="mt-10 border-t border-zinc-200 pt-6 dark:border-zinc-800">

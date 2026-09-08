@@ -19,6 +19,12 @@ export async function getCurrentCoach() {
   return {
     id: coach.id,
     name: coach.name,
-    clubs: coach.coachClubs.map((cc) => cc.club),
+    isAdmin: coach.isAdmin,
+    clubs: coach.coachClubs
+      .filter((cc) => cc.status === "approved")
+      .map((cc) => cc.club),
+    pendingClubs: coach.coachClubs
+      .filter((cc) => cc.status === "pending")
+      .map((cc) => cc.club),
   };
 }

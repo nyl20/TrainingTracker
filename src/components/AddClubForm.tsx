@@ -1,29 +1,29 @@
 "use client";
 
 import { useActionState } from "react";
-import { addSession } from "@/app/admin/actions";
+import { addClub } from "@/app/admin/actions";
 
 const inputClass =
   "rounded border border-zinc-300 bg-white px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-900";
 const buttonClass =
   "rounded bg-black px-4 py-2 text-sm font-medium text-white dark:bg-white dark:text-black";
 
-export default function AddSessionForm() {
-  const [state, formAction, pending] = useActionState(addSession, {
+export default function AddClubForm() {
+  const [state, formAction, pending] = useActionState(addClub, {
     addedName: null,
   });
 
   return (
     <form action={formAction} className="mt-3 flex flex-col gap-2">
       <input
-        key={`input-${state.addedName ?? "empty"}`}
+        key={state.addedName ?? "empty"}
         name="name"
-        placeholder="Session name"
+        placeholder="Club name"
         required
         className={inputClass}
       />
       <button type="submit" disabled={pending} className={buttonClass}>
-        Add session
+        Add club
       </button>
       {state.addedName && (
         <p

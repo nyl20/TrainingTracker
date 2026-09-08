@@ -1,7 +1,7 @@
 "use server";
 
 import { db } from "@/db";
-import { students, sessions, progressLogs, coaches } from "@/db/schema";
+import { students, progressLogs, coaches } from "@/db/schema";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { eq, inArray } from "drizzle-orm";
@@ -38,21 +38,6 @@ export async function addStudent(
   });
   revalidatePath("/");
   revalidatePath("/settings");
-  return { addedName: name.trim() };
-}
-
-export async function addSession(
-  _prevState: { addedName: string | null },
-  formData: FormData,
-) {
-  const name = formData.get("name");
-  if (typeof name !== "string" || name.trim() === "") {
-    return { addedName: null };
-  }
-
-  await db.insert(sessions).values({ name: name.trim() });
-  revalidatePath("/settings");
-  revalidatePath("/progress/new");
   return { addedName: name.trim() };
 }
 
@@ -122,6 +107,46 @@ export async function addProgressLog(formData: FormData) {
     redirect(`/students/${authorizedStudentIds[0]}`);
   }
   redirect(`/?logged=${authorizedStudentIds.length}`);
+}
+
+export async function updateStudent(formData: FormData) {
+  const coach = await getCurrentCoach();
+  if (!coach) return;
+
+  const studentId = formData.get("studentId");
+  const name = formData.get("name");
+  const clubId = formData.get("clubId");
+  if (
+    typeof studentId !== "string" ||
+    studentId === "" ||
+    typeof name !== "string" ||
+    name.trim() === "" ||
+    typeof clubId !== "string" ||
+    !coach.clubs.some((c) => c.id === clubId)
+  ) {
+    return;
+  }
+
+  const existing = await db.query.students.findFirst({
+    where: eq(students.id, studentId),
+  });
+  if (!existing || !coach.clubs.some((c) => c.id === existing.clubId)) return;
+
+  const startDate = formData.get("startDate");
+
+  await db
+    .update(students)
+    .set({
+      name: name.trim(),
+      clubId,
+      startDate: typeof startDate === "string" && startDate !== "" ? startDate : null,
+      arm: optionalText(formData, "arm"),
+    })
+    .where(eq(students.id, studentId));
+
+  revalidatePath("/");
+  revalidatePath(`/students/${studentId}`);
+  redirect(`/students/${studentId}`);
 }
 
 export async function deleteStudent(formData: FormData) {

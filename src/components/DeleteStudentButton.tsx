@@ -24,9 +24,21 @@ export default function DeleteStudentButton({
       <input type="hidden" name="studentId" value={studentId} />
       <button
         type="submit"
-        className="text-sm text-red-600 hover:text-red-700 dark:text-red-500 dark:hover:text-red-400"
+        aria-label={`Delete ${studentName}`}
+        className="flex h-9 w-9 items-center justify-center rounded-full border border-red-200 text-red-600 hover:bg-red-50 dark:border-red-900 dark:text-red-500 dark:hover:bg-red-950"
       >
-        Delete student
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 20 20"
+          fill="currentColor"
+          className="h-5 w-5"
+        >
+          <path
+            fillRule="evenodd"
+            d="M8.75 1A2.75 2.75 0 0 0 6 3.75v.443c-.795.077-1.584.176-2.365.298a.75.75 0 1 0 .23 1.482l.149-.022.841 10.518A2.75 2.75 0 0 0 7.596 19h4.807a2.75 2.75 0 0 0 2.742-2.53l.841-10.52.149.023a.75.75 0 0 0 .23-1.482 41.03 41.03 0 0 0-2.365-.298V3.75A2.75 2.75 0 0 0 11.25 1h-2.5ZM10 4c.84 0 1.673.025 2.5.075V3.75c0-.69-.56-1.25-1.25-1.25h-2.5c-.69 0-1.25.56-1.25 1.25v.325C8.327 4.025 9.16 4 10 4ZM8.058 6.5a.75.75 0 0 1 .797.7l.35 5.25a.75.75 0 0 1-1.497.1l-.35-5.25a.75.75 0 0 1 .7-.8Zm4.242.7a.75.75 0 1 0-1.498-.1l-.35 5.25a.75.75 0 0 0 1.498.1l.35-5.25Z"
+            clipRule="evenodd"
+          />
+        </svg>
       </button>
     </form>
   );

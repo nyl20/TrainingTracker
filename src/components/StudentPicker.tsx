@@ -80,8 +80,9 @@ export default function StudentPicker({
               <button
                 key={s.id}
                 type="button"
+                onMouseDown={(e) => e.preventDefault()}
                 onClick={() => select(s.id)}
-                className="block w-full px-3 py-2 text-left text-sm hover:bg-zinc-50 dark:hover:bg-zinc-800"
+                className="block w-full touch-manipulation px-3 py-2 text-left text-sm hover:bg-zinc-50 dark:hover:bg-zinc-800"
               >
                 {s.name}
               </button>

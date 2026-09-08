@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { signUp } from "@/app/auth/actions";
+import { db } from "@/db";
+import { clubs } from "@/db/schema";
 
 const inputClass =
   "rounded border border-zinc-300 bg-white px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-900";
@@ -12,6 +14,7 @@ export default async function SignUpPage({
   searchParams: Promise<{ error?: string }>;
 }) {
   const { error } = await searchParams;
+  const allClubs = await db.select().from(clubs);
 
   return (
     <div className="flex flex-1 flex-col items-center justify-center bg-zinc-50 px-6 py-16 font-sans dark:bg-black">
@@ -43,15 +46,30 @@ export default async function SignUpPage({
             minLength={6}
             className={inputClass}
           />
-          <label className="text-sm text-zinc-500">
-            Clubs you coach at (comma-separated)
-            <input
-              name="clubs"
-              placeholder="Riverside Archery Club, Downtown Club"
-              required
-              className={`mt-1 w-full ${inputClass}`}
-            />
-          </label>
+
+          <span className="text-sm text-zinc-500">Clubs you coach at</span>
+          {allClubs.length === 0 ? (
+            <p className="text-sm text-zinc-500">
+              No clubs are set up yet. Ask your admin to add your club first.
+            </p>
+          ) : (
+            <div className="max-h-48 overflow-y-auto rounded border border-zinc-300 dark:border-zinc-700">
+              {allClubs.map((club) => (
+                <label
+                  key={club.id}
+                  className="flex items-center gap-2 px-3 py-2 text-sm hover:bg-zinc-50 dark:hover:bg-zinc-900"
+                >
+                  <input type="checkbox" name="clubIds" value={club.id} />
+                  {club.name}
+                </label>
+              ))}
+            </div>
+          )}
+          <p className="text-xs text-zinc-500">
+            An admin will need to approve you for each club before you can see
+            its students.
+          </p>
+
           <button type="submit" className={buttonClass}>
             Sign up
           </button>

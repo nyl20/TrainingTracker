@@ -48,12 +48,16 @@ export default function AddStudentForm({
           </option>
         ))}
       </select>
-      <input
+      <select
         key={`arm-${state.addedName ?? "empty"}`}
         name="arm"
-        placeholder="Arm"
+        defaultValue=""
         className={inputClass}
-      />
+      >
+        <option value="">Arm (optional)</option>
+        <option value="Left">Left</option>
+        <option value="Right">Right</option>
+      </select>
       <button type="submit" disabled={name.trim() === ""} className={buttonClass}>
         Add student
       </button>

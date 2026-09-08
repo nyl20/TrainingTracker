@@ -1,9 +1,10 @@
 import { db } from "@/db";
 import { students } from "@/db/schema";
-import { eq } from "drizzle-orm";
+import { eq, desc } from "drizzle-orm";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentCoach } from "@/lib/current-coach";
+import StudentSearchList from "@/components/StudentSearchList";
 
 export default async function Home({
   searchParams,
@@ -20,7 +21,11 @@ export default async function Home({
       : coach.clubs[0]?.id;
 
   const activeStudents = activeClubId
-    ? await db.select().from(students).where(eq(students.clubId, activeClubId))
+    ? await db
+        .select()
+        .from(students)
+        .where(eq(students.clubId, activeClubId))
+        .orderBy(desc(students.createdAt))
     : [];
 
   return (
@@ -36,9 +41,16 @@ export default async function Home({
           </p>
         )}
 
-        {coach.clubs.length === 0 && (
+        {coach.clubs.length === 0 && coach.pendingClubs.length === 0 && (
           <p className="mt-6 text-sm text-zinc-500">
             You&apos;re not part of any clubs yet.
+          </p>
+        )}
+
+        {coach.pendingClubs.length > 0 && (
+          <p className="mt-6 text-sm text-zinc-500">
+            Waiting on admin approval for:{" "}
+            {coach.pendingClubs.map((c) => c.name).join(", ")}
           </p>
         )}
 
@@ -60,26 +72,7 @@ export default async function Home({
           </div>
         )}
 
-        <ul className="mt-6 flex flex-col gap-2">
-          {activeStudents.map((student) => (
-            <li key={student.id}>
-              <Link
-                href={`/students/${student.id}`}
-                className="block rounded border border-zinc-200 bg-white px-4 py-3 text-sm hover:border-zinc-300 dark:border-zinc-800 dark:bg-zinc-900 dark:hover:border-zinc-700"
-              >
-                <div className="font-medium">{student.name}</div>
-                <div className="text-zinc-500">
-                  {[student.startDate, student.arm].filter(Boolean).join(" · ")}
-                </div>
-              </Link>
-            </li>
-          ))}
-          {activeClubId && activeStudents.length === 0 && (
-            <li className="text-sm text-zinc-500">
-              No students yet. Add one from Settings.
-            </li>
-          )}
-        </ul>
+        {activeClubId && <StudentSearchList students={activeStudents} />}
       </main>
     </div>
   );

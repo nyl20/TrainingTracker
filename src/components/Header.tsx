@@ -1,6 +1,9 @@
 import Link from "next/link";
+import { getCurrentCoach } from "@/lib/current-coach";
 
-export default function Header() {
+export default async function Header() {
+  const coach = await getCurrentCoach();
+
   return (
     <header className="flex items-center justify-between border-b border-zinc-200 bg-white px-6 py-4 dark:border-zinc-800 dark:bg-black">
       <Link
@@ -10,6 +13,26 @@ export default function Header() {
         TrainingTracker
       </Link>
       <div className="flex items-center gap-3">
+        {coach?.isAdmin && (
+          <Link
+            href="/admin"
+            aria-label="Admin"
+            className="flex h-9 w-9 items-center justify-center rounded-full border border-zinc-300 text-zinc-700 hover:bg-zinc-100 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-900"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+              className="h-5 w-5"
+            >
+              <path
+                fillRule="evenodd"
+                d="M10 1a4.5 4.5 0 0 0-4.5 4.5V9H5a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6a2 2 0 0 0-2-2h-.5V5.5A4.5 4.5 0 0 0 10 1Zm3 8V5.5a3 3 0 1 0-6 0V9h6Z"
+                clipRule="evenodd"
+              />
+            </svg>
+          </Link>
+        )}
         <Link
           href="/progress/new"
           aria-label="Log a new progress entry"

@@ -25,6 +25,16 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
+/* iOS Safari auto-zooms the page when focusing a text field smaller than
+   16px. Force form fields to 16px on small screens to prevent that. */
+@media (max-width: 640px) {
+  input,
+  select,
+  textarea {
+    font-size: 16px;
+  }
+}
+
 @keyframes fade-out-message {
   0%,
   80% {
@@ -38,4 +48,15 @@ body {
 
 .animate-fade-out-message {
   animation: fade-out-message 3s ease-in-out forwards;
+}
+
+/* This app is mostly used on mobile — hide scrollbar chrome everywhere
+   while keeping scrolling itself fully functional. */
+* {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* legacy Edge/IE */
+}
+
+*::-webkit-scrollbar {
+  display: none; /* Chrome/Safari/newer Edge */
 }

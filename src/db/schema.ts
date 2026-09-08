@@ -1,10 +1,12 @@
 import {
   pgTable,
   pgSchema,
+  pgEnum,
   uuid,
   text,
   date,
   timestamp,
+  boolean,
   primaryKey,
 } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
@@ -13,6 +15,7 @@ import { relations } from "drizzle-orm";
 const authSchema = pgSchema("auth");
 export const authUsers = authSchema.table("users", {
   id: uuid("id").primaryKey(),
+  email: text("email"),
 });
 
 export const clubs = pgTable("clubs", {
@@ -27,10 +30,17 @@ export const coaches = pgTable("coaches", {
     .unique()
     .references(() => authUsers.id, { onDelete: "cascade" }),
   name: text("name").notNull(),
+  isAdmin: boolean("is_admin").notNull().default(false),
   createdAt: timestamp("created_at", { withTimezone: true })
     .defaultNow()
     .notNull(),
 });
+
+export const coachClubStatus = pgEnum("coach_club_status", [
+  "pending",
+  "approved",
+  "rejected",
+]);
 
 export const coachClubs = pgTable(
   "coach_clubs",
@@ -41,6 +51,10 @@ export const coachClubs = pgTable(
     clubId: uuid("club_id")
       .notNull()
       .references(() => clubs.id, { onDelete: "cascade" }),
+    status: coachClubStatus("status").notNull().default("pending"),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
   },
   (table) => [primaryKey({ columns: [table.coachId, table.clubId] })],
 );
